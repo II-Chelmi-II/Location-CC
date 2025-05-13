@@ -2,7 +2,7 @@ class LocationItem {
   constructor(id, name) {
     this.id = id;
     this.name = name;
-    this.reservations = []; // La liste des périodes réservées 
+    this.reservations = []; // Liste des réservations avec { start, end }
   }
 
   isAvailable(startDate, durationDays) {
@@ -10,9 +10,7 @@ class LocationItem {
     endDate.setDate(endDate.getDate() + durationDays);
 
     return !this.reservations.some(({ start, end }) => {
-      return (
-        (start <= endDate && end >= startDate)
-      );
+      return start <= endDate && end >= startDate;
     });
   }
 
@@ -20,7 +18,11 @@ class LocationItem {
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + durationDays);
 
-    this.reservations.push({ start: startDate, end: endDate });
+    this.reservations.push({ start: new Date(startDate), end: endDate });
+  }
+
+  getActiveReservations(referenceDate = new Date()) {
+    return this.reservations.filter(({ end }) => end >= referenceDate);
   }
 }
 
